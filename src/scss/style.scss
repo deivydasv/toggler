@@ -1,0 +1,18 @@
+.js-toggler {
+    display: none;
+    &.is-transitioning {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        transition: height .5s ease;
+        &.is-fade {
+            transition: opacity .5s linear;
+        }
+        &.is-slidefade {
+            transition: height .5s ease, opacity .5s linear;
+        }
+    }
+    &.is-visible {
+        display: block;
+    }
+}

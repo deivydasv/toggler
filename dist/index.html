@@ -1,0 +1,401 @@
+<!--
+ // Toggler (https://github.com/deivydasv/toggler)
+ // Version: 1.0.0
+ // Last update on: 2017-11-17 01:40:38
+ // Author: Deivydas Vaseris
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Toggler</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/toggler.css" />
+  <style>
+    body {
+      line-height: 1.15;
+    }
+
+    pre {
+      background: #eee;
+      padding: 1em;
+      line-height: 1;
+    }
+
+    .card :last-child {
+      margin-bottom: 0;
+    }
+  </style>
+  <script src="js/toggler.js"></script>
+  <script src="js/demo.js"></script>
+</head>
+
+<body>
+  <header class="jumbotron text-center">
+    <h1 class="display-4 mb-3">Toggler</h1>
+    <p class="lead">Simple javascript plugin for toggling element (suitable for accordion or tabs)</p> <a class="btn btn-lg btn-success pl-3 pr-3" href="https://github.com/deivydasv/toggler">View on Github</a>
+  </header>
+  <main class="main">
+    <div class="container pt-5">
+      <h2>Install</h2>
+      <div class="mb-1">
+        <div class="card">
+          <pre><code>&lt;link rel="stylesheet" href="css/toggler.css" /&gt;
+
+&lt;script src="js/toggler.js"&gt;</code></pre>
+        </div>
+      </div>
+      <div class="mb-1">
+        <div class="card">
+          <pre><code>&lt;script&gt;
+
+    Toggler.Init();
+
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+      <h2 class="mt-5">Config</h2>
+      <div class="mb-1">
+        <div class="card">
+          <pre><code>Toggler.Init({
+
+    CLASS_BASE: 'js-toggler',
+
+    CLASS_VISIBLE: 'is-visible',
+
+    CLASS_TARGET_VISIBLE: 'is-target-visible',
+
+    CLASS_TRANSITIONING: 'is-transitioning',
+
+    CLASS_FADE: 'is-fade',
+
+    CLASS_SLIDEFADE: 'is-slidefade'
+
+});</code></pre>
+        </div>
+      </div>
+      <h2 class="mt-5">Basic</h2>
+      <p> <a class="btn btn-primary" data-toggler="toggle" href="#demo1">Toggle</a>
+        <a class="btn btn-primary" data-toggler="show" href="#demo1">Show</a> <a class="btn btn-primary" data-toggler="hide" href="#demo1">Hide</a>
+      </p>
+      <div class="mb-5">
+        <div class="js-toggler" id="demo1">
+          <div class="card">
+            <pre><code>&lt;a class="btn" data-toggler="toggle" href="#demo1"&gt;Toggle&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="show" href="#demo1"&gt;Show&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="hide" href="#demo1"&gt;Hide&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler" id="demo1"&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Basic using [data-toggler-target]</h2>
+      <p>
+        <button class="btn btn-primary" data-toggler="toggle" data-toggler-target="#demo2">Toggle</button> <a class="btn btn-primary" data-toggler="show" data-toggler-target="#demo2" href="#">Show</a>
+        <a class="btn btn-primary text-white" data-toggler="hide" data-toggler-target="#demo2">Hide</a>
+      </p>
+      <div class="mb-5">
+        <div class="js-toggler" id="demo2">
+          <div class="card">
+            <pre><code>&lt;button class="btn btn-primary" data-toggler="toggle" <mark>data-toggler-target="#demo2"</mark>&gt;Toggle&lt;/button&gt;
+
+&lt;a class="btn" data-toggler="show" <mark>data-toggler-target="#demo2"</mark> href="#"&gt;Show&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="hide" <mark>data-toggler-target="#demo2"</mark>&gt;Hide&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler" id="demo2"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Visible at start</h2>
+      <p> <a class="btn btn-primary" data-toggler="toggle" href="#demo3">Toggle</a>
+        <a class="btn btn-primary" data-toggler="show" href="#demo3">Show</a> <a class="btn btn-primary" data-toggler="hide" href="#demo3">Hide</a>
+      </p>
+      <div class="mb-5">
+        <div class="js-toggler is-visible" id="demo3">
+          <div class="card">
+            <pre><code>&lt;a class="btn" data-toggler="toggle" href="#demo3"&gt;Toggle&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="show" href="#demo3"&gt;Show&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="hide" href="#demo3"&gt;Hide&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler <mark>is-visible</mark>" id="demo3"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Multiple targets</h2>
+      <p> <a class="btn btn-primary" data-toggler="toggle" data-toggler-target=".demo4" href="#">Toggle (.demo4)</a>
+        <a class="btn btn-primary" data-toggler="toggle" data-toggler-target="#demo4b, #demo4c" href="#">Toggle (#demo4b, #demo4c)</a>
+        <a class="btn btn-danger" data-toggler="toggle" data-toggler-target="#demo4b" href="#">Toggle</a> <a class="btn btn-info" data-toggler="toggle" data-toggler-target="#demo4c" href="#">Toggle</a>
+      </p>
+      <div class="row mb-5">
+        <div class="col-12 mb-4">
+          <div class="js-toggler is-visible demo4" id="demo4a">
+            <div class="card">
+              <pre><code>&lt;a class="btn btn-primary" data-toggler="toggle" <mark>data-toggler-target=".demo4"</mark> href="#"&gt;Toggle&lt;/a&gt;
+
+&lt;a class="btn btn-primary" data-toggler="toggle" <mark>data-toggler-target="#demo4a, #demo4b, #demo4c"</mark> href="#"&gt;Toggle&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler is-visible <mark>demo4"</mark> <mark>id="demo4a"</mark>&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-visible <mark>demo4"</mark> <mark>id="demo4b"</mark>&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-visible <mark>demo4"</mark> <mark>id="demo4c"</mark>&gt;&lt;/div&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+          <div class="js-toggler is-visible demo4" id="demo4b">
+            <div class="card">
+              <pre><code class="text-danger">&lt;a class="btn btn-danger" data-toggler="toggle" 
+
+        data-toggler-target="#demo4b" href="#"&gt;Toggle&lt;/a&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+          <div class="js-toggler is-visible demo4" id="demo4c">
+            <div class="card">
+              <pre><code class="text-info">&lt;a class="btn btn-info" data-toggler="toggle" 
+
+        data-toggler-target="#demo4c" href="#"&gt;Toggle&lt;/a&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Accordion (data-toggler-collection)</h2>
+      <div id="accordion">
+        <div class="card mb-2">
+          <div class="card-header"><a href="#" data-toggler="toggle" data-toggler-target="#demo5a" data-toggler-collection="#accordion">Lorem ipsum dolor.</a>
+          </div>
+          <div class="js-toggler is-visible" id="demo5a">
+            <pre><code>&lt;a data-toggler="toggle" data-toggler-target="#demo5a" <mark>data-toggler-collection="#accordion"</mark> href="#"&gt;Lorem ipsum dolor sit amet.&lt;/a&gt;
+
+&lt;div class="js-toggler is-visible" id="demo5a"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-header"><a href="#" data-toggler="toggle" data-toggler-target="#demo5b" data-toggler-collection="#accordion">Maiores, saepe, qui!</a>
+          </div>
+          <div class="js-toggler" id="demo5b">
+            <pre><code>&lt;a data-toggler="toggle" data-toggler-target="#demo5b" <mark>data-toggler-collection="#accordion"</mark> href="#"&gt;Lorem ipsum dolor sit amet.&lt;/a&gt;
+
+&lt;div class="js-toggler" id="demo5b"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-header"><a href="#" data-toggler="toggle" data-toggler-target="#demo5c" data-toggler-collection="#accordion">Itaque qui, fuga!</a>
+          </div>
+          <div class="js-toggler" id="demo5c">
+            <pre><code>&lt;a data-toggler="toggle" data-toggler-target="#demo5c" <mark>data-toggler-collection="#accordion"</mark> href="#"&gt;Lorem ipsum dolor sit amet.&lt;/a&gt;
+
+&lt;div class="js-toggler" id="demo5c"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-header"><a href="#" data-toggler="toggle" data-toggler-target="#demo5d" data-toggler-collection="#accordion">Fugiat, non cumque.</a>
+          </div>
+          <div class="js-toggler" id="demo5d">
+            <pre><code>&lt;a data-toggler="toggle" data-toggler-target="#demo5d" <mark>data-toggler-collection="#accordion"</mark> href="#"&gt;Lorem ipsum dolor sit amet.&lt;/a&gt;
+
+&lt;div class="js-toggler" id="demo5d"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Tabs</h2>
+      <ul class="nav nav-tabs" style="margin-bottom:-1px">
+        <li class="nav-item"><a href="#demo6a" class="nav-link" data-toggler="tabs" data-toggler-collection="#tabs">Lorem.</a>
+        </li>
+        <li class="nav-item"><a href="#demo6b" class="nav-link" data-toggler="tabs" data-toggler-collection="#tabs">Molestias!</a>
+        </li>
+        <li class="nav-item"><a href="#demo6c" class="nav-link" data-toggler="tabs" data-toggler-collection="#tabs">Doloribus.</a>
+        </li>
+        <li class="nav-item"><a href="#demo6d" class="nav-link" data-toggler="tabs" data-toggler-collection="#tabs">Perferendis.</a>
+        </li>
+      </ul>
+      <div id="tabs">
+        <div class="js-toggler is-fade is-visible" id="demo6a">
+          <div class="card">
+            <pre><code class="text-danger">&lt;a href="#demo6a" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Lorem.&lt;/a&gt;
+
+&lt;a href="#demo6b" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Molestias!&lt;/a&gt;
+
+&lt;a href="#demo6c" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Doloribus.&lt;/a&gt;
+
+&lt;a href="#demo6d" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Perferendis.&lt;/a&gt;
+
+&lt;div class="js-toggler is-fade is-visible" id="demo6a"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6b"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6c"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6d"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+        <div class="js-toggler is-fade" id="demo6b">
+          <div class="card">
+            <pre><code class="text-success">&lt;a href="#demo6a" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Lorem.&lt;/a&gt;
+
+&lt;a href="#demo6b" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Molestias!&lt;/a&gt;
+
+&lt;a href="#demo6c" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Doloribus.&lt;/a&gt;
+
+&lt;a href="#demo6d" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Perferendis.&lt;/a&gt;
+
+&lt;div class="js-toggler is-fade is-visible" id="demo6a"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6b"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6c"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6d"&gt;&lt;/div&gt;
+
+
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
+
+Delectus cumque reiciendis esse, aut dolores? 
+
+Illo libero, fuga distinctio molestiae dolores.</code></pre>
+          </div>
+        </div>
+        <div class="js-toggler is-fade" id="demo6c">
+          <div class="card">
+            <pre><code class="text-warning">&lt;a href="#demo6a" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Lorem.&lt;/a&gt;
+
+&lt;a href="#demo6b" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Molestias!&lt;/a&gt;
+
+&lt;a href="#demo6c" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Doloribus.&lt;/a&gt;
+
+&lt;a href="#demo6d" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Perferendis.&lt;/a&gt;
+
+&lt;div class="js-toggler is-fade is-visible" id="demo6a"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6b"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6c"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6d"&gt;&lt;/div&gt;
+
+Lorem ipsum dolor sit amet.</code></pre>
+          </div>
+        </div>
+        <div class="js-toggler is-fade" id="demo6d">
+          <div class="card">
+            <pre><code class="text-info">&lt;a href="#demo6a" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Lorem.&lt;/a&gt;
+
+&lt;a href="#demo6b" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Molestias!&lt;/a&gt;
+
+&lt;a href="#demo6c" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Doloribus.&lt;/a&gt;
+
+&lt;a href="#demo6d" <mark>data-toggler="tab"</mark> data-toggler-collection="#tabs"&gt;Perferendis.&lt;/a&gt;
+
+&lt;div class="js-toggler is-fade is-visible" id="demo6a"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6b"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6c"&gt;&lt;/div&gt;
+
+&lt;div class="js-toggler is-fade" id="demo6d"&gt;&lt;/div&gt;
+
+
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+
+Consectetur reprehenderit magnam ipsam ex illo doloremque quia maiores voluptatem itaque.
+
+Dolorem necessitatibus minus totam odio nisi sit quis perferendis. Rem, accusantium!
+
+Repellat ea magni natus id eius odit libero officiis quis reprehenderit alias esse voluptas fuga pariatur consequatur.
+
+Animi minus ipsam adipisci blanditiis.</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Animations</h2>
+      <p> <a class="btn btn-primary" data-toggler="toggle" data-toggler-target="#demo7a" href="#">Toggle slide (default)</a>
+        <a class="btn btn-danger" data-toggler="toggle" data-toggler-target="#demo7b" href="#">Toggle fade</a>
+        <a class="btn btn-info" data-toggler="toggle" data-toggler-target="#demo7c" href="#">Toggle slide fade</a>
+        <a class="btn btn-dark" data-toggler="toggle" data-toggler-target=".demo7" href="#">Toggle all</a>
+      </p>
+      <div class="mb-3">
+        <div class="js-toggler is-visible demo7" id="demo7a">
+          <div class="card">
+            <pre><code class="text-primary">&lt;a class="btn btn-primary" data-toggler="toggle" data-toggler-target="#demo7a" href="#"&gt;Toggle slide (default)&lt;/a&gt;
+
+                        
+
+&lt;div class="js-toggler is-visible demo7" id="demo7a"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="js-toggler is-fade is-visible is-fade demo7" id="demo7b">
+          <div class="card">
+            <pre><code class="text-danger">&lt;a class="btn btn-danger" data-toggler="toggle" data-toggler-target="#demo7b" href="#"&gt;Toggle fade&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler <mark>is-fade</mark> is-visible is-fade demo7" id="demo7b"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="js-toggler is-slidefade is-visible is-slidefade demo7" id="demo7c">
+          <div class="card">
+            <pre><code class="text-info">&lt;a class="btn btn-info" data-toggler="toggle" data-toggler-target="#demo7c" href="#"&gt;Toggle slide fade&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler <mark>is-slidefade</mark> is-visible is-slidefade demo7" id="demo7c"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <h2 class="mt-5">Force no animation</h2>
+      <p> <a class="btn btn-primary" data-toggler="toggle" href="#demo8">Toggle</a>
+        <a class="btn btn-primary" data-toggler="show" href="#demo8">Show</a> <a class="btn btn-primary" data-toggler="hide" href="#demo8">Hide</a>
+        <a class="btn btn-danger" data-toggler="toggle" data-toggler-force="1" href="#demo8">Force toggle</a> <a class="btn btn-danger" data-toggler="show" data-toggler-force="1" href="#demo8">Force show</a>
+        <a class="btn btn-danger" data-toggler="hide" data-toggler-force="1" href="#demo8">Force hide</a>
+      </p>
+      <div class="mb-5">
+        <div class="js-toggler is-visible" id="demo8">
+          <div class="card">
+            <pre><code>&lt;a class="btn" data-toggler="toggle" href="#demo3"&gt;Toggle&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="show" href="#demo3"&gt;Show&lt;/a&gt;
+
+&lt;a class="btn" data-toggler="hide" href="#demo3"&gt;Hide&lt;/a&gt;
+
+
+
+&lt;div class="js-toggler <mark>is-visible</mark>" id="demo3"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer mt-5">
+    <div class="container">
+      <div class="text-muted pt-3 pb-3" style="border-top: 1px solid #eee">
+        <p class="mb-0">Deivydas Vaseris - 2017</p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
