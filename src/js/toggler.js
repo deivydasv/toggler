@@ -253,23 +253,10 @@ class Toggler {
 
         this.element.removeEventListener(Toggler.TransitionEnd, callback);
     }
-     
-    static Init(config) {
-        
-        // config
-        Toggler.Config = Object.assign({
-            CLASS_BASE: 'js-toggler',
-            CLASS_VISIBLE: 'is-visible',
-            CLASS_TARGET_VISIBLE: 'is-target-visible',
-            CLASS_TRANSITIONING: 'is-transitioning',
-            CLASS_FADE: 'is-fade',
-            CLASS_SLIDEFADE: 'is-slidefade',
-        }, config || {});
-        
-        
-        const init = () => {
-            
-            //add click events for triggers
+    
+    static _addEventClick() {
+        // body.onclick delegate
+        if (Toggler.Config.DELEGATE_CLICK) {
             document.body.addEventListener('click', event => {
                 let trigger;
                 for(let element = event.target; element != document.body; element = element.parentElement) {
@@ -282,27 +269,66 @@ class Toggler {
                     return;
 
                 event.preventDefault();
+                
+                triggerClickActions(trigger);
+            });
+        }
+        // [data-toggler].onclick
+        else {
+            const triggers = document.body.querySelectorAll('[data-toggler]');
+            if (!triggers.length)
+                return;
+            
+            document.body.querySelectorAll('[data-toggler]').forEach(trigger => {
+                trigger.addEventListener('click', event => {
+                    event.preventDefault();
 
-                let datatarget;
-                if (trigger.dataset.togglerTarget) {
-                    datatarget = trigger.dataset.togglerTarget;
-                }
-                else if (trigger.hasAttribute('href')) {
-                    datatarget = trigger.getAttribute('href');
-                }
-                
-                if (!datatarget)
-                    return;
-                
-                const targets = document.body.querySelectorAll(datatarget);
-                const action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
-                const force = trigger.dataset.togglerForce ? true : false;
-                const collection = document.body.querySelector(trigger.dataset.togglerCollection);
-                
-                targets.forEach(target => {
-                    Toggler.getPlugin(target)[action](collection, force); 
+                    triggerClickActions(trigger);
                 });
             });
+        }
+        
+        function triggerClickActions(trigger) { 
+            let datatarget;
+            if (trigger.dataset.togglerTarget) {
+                datatarget = trigger.dataset.togglerTarget;
+            }
+            else if (trigger.hasAttribute('href')) {
+                datatarget = trigger.getAttribute('href');
+            }
+
+            if (!datatarget)
+                return;
+
+            const targets = document.body.querySelectorAll(datatarget);
+            const action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
+            const force = trigger.dataset.togglerForce ? true : false;
+            const collection = document.body.querySelector(trigger.dataset.togglerCollection);
+
+            targets.forEach(target => {
+                Toggler.getPlugin(target)[action](collection, force); 
+            });  
+        };
+    }
+     
+    static Init(config) {
+        
+        // config
+        Toggler.Config = Object.assign({
+            CLASS_BASE: 'js-toggler',
+            CLASS_VISIBLE: 'is-visible',
+            CLASS_TARGET_VISIBLE: 'is-target-visible',
+            CLASS_TRANSITIONING: 'is-transitioning',
+            CLASS_FADE: 'is-fade',
+            CLASS_SLIDEFADE: 'is-slidefade',
+            DELEGATE_CLICK: false
+        }, config || {});
+        
+        
+        const init = () => {
+            
+            //add click events for triggers
+            Toggler._addEventClick();
             
             //check all triggers (to add CLASS_TARGET_VISIBLE class on trigger / init Toggler on target)
             document.body.querySelectorAll('[data-toggler]').forEach(trigger => {
