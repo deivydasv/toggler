@@ -42,19 +42,20 @@ class Toggler {
         if (collection) {
             collection = typeof collection == 'string' ? document.body.querySelector(collection) : collection;
             if (!collection) break collection;
+            
 
-            //find siblings in given collection
+            // find siblings in given collection
             others = collection.querySelectorAll('.' + Toggler.Config.CLASS_BASE);
             if (!others) break collection;
-            others = Array.from(others).filter(e => !e.isSameNode(el));
-            
-            for(let e of others) {
-                const toggler = Toggler.getPlugin(e);
-                //stop if any of siblings are transitioning
+            others = Array.prototype.slice.call(others).filter(e => !e.isSameNode(el));
+
+            for(let i = 0; i < others.length; i++) {
+                const toggler = Toggler.getPlugin( others[i] );
+                // stop if any of siblings are transitioning
                 if (toggler.isTransitioning())
                     return;
                 
-                //or close if visible
+                // or close if visible
                 if (toggler.isVisible())
                     toggler.hide(null, force || force_siblings);
             }
@@ -104,7 +105,6 @@ class Toggler {
         if (!this.isFadeAnimation()) {
             el.style.height = el.scrollHeight + 'px';
         }
-        
         
     }
     
@@ -202,7 +202,8 @@ class Toggler {
     
     // check trigger (add/remove class CLASS_TARGET_VISIBLE)
     _triggerCheck() {
-        document.body.querySelectorAll('[data-toggler]').forEach(trigger => {
+        const triggers = document.body.querySelectorAll('[data-toggler]');
+        Array.prototype.slice.call(triggers).forEach(trigger => {
             let datatarget;
             if (trigger.dataset.togglerTarget) {
                 datatarget = trigger.dataset.togglerTarget;
@@ -215,7 +216,7 @@ class Toggler {
                 return;
 
             const targets = document.body.querySelectorAll(datatarget);
-            targets.forEach(target => {
+            Array.prototype.slice.call(targets).forEach(target => {
                 if (target.isSameNode(this.element)) {
                     if (Toggler.getPlugin(target).isVisible())
                         trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
@@ -232,7 +233,15 @@ class Toggler {
     }
     
     _dispatchEvent(name) {
-        this.element.dispatchEvent(new Event( 'toggler.' + name ));
+        let event;
+        try {
+            event = new Event('toggler.' + name);
+        }
+        catch (error) {
+            event = document.createEvent('Event');
+            event.initEvent('toggler.' + name, false, false);
+        }
+        this.element.dispatchEvent(event);
     }
     
     _addTransitionEndListener(callback) {
@@ -254,7 +263,8 @@ class Toggler {
         this.element.removeEventListener(Toggler.TransitionEnd, callback);
     }
     
-    static _addEventClick() {
+    static AddEventClick() {
+        
         // body.onclick delegate
         if (Toggler.Config.DELEGATE_CLICK) {
             document.body.addEventListener('click', event => {
@@ -273,13 +283,14 @@ class Toggler {
                 triggerClickActions(trigger);
             });
         }
+        
         // [data-toggler].onclick
         else {
             const triggers = document.body.querySelectorAll('[data-toggler]');
             if (!triggers.length)
                 return;
             
-            document.body.querySelectorAll('[data-toggler]').forEach(trigger => {
+            Array.prototype.slice.call(triggers).forEach(trigger => {
                 trigger.addEventListener('click', event => {
                     event.preventDefault();
 
@@ -305,7 +316,7 @@ class Toggler {
             const force = trigger.dataset.togglerForce ? true : false;
             const collection = document.body.querySelector(trigger.dataset.togglerCollection);
 
-            targets.forEach(target => {
+            Array.prototype.slice.call(targets).forEach(target => {
                 Toggler.getPlugin(target)[action](collection, force); 
             });  
         };
@@ -314,7 +325,7 @@ class Toggler {
     static Init(config) {
         
         // config
-        Toggler.Config = Object.assign({
+        Toggler.Config = {
             CLASS_BASE: 'js-toggler',
             CLASS_VISIBLE: 'is-visible',
             CLASS_TARGET_VISIBLE: 'is-target-visible',
@@ -322,16 +333,21 @@ class Toggler {
             CLASS_FADE: 'is-fade',
             CLASS_SLIDEFADE: 'is-slidefade',
             DELEGATE_CLICK: false
-        }, config || {});
+        };
         
+        Object.keys(config || {}).forEach(function(name) {
+            Toggler.Config[name] = config[name];
+        });
         
         const init = () => {
             
-            //add click events for triggers
-            Toggler._addEventClick();
+            // add click events for triggers
+            Toggler.AddEventClick();
             
-            //check all triggers (to add CLASS_TARGET_VISIBLE class on trigger / init Toggler on target)
-            document.body.querySelectorAll('[data-toggler]').forEach(trigger => {
+            // check all triggers (to add CLASS_TARGET_VISIBLE class on trigger/init Toggler on target)
+            const triggers = document.body.querySelectorAll('[data-toggler]');
+            
+            Array.prototype.slice.call(triggers).forEach(trigger => {
                 let datatarget;
                 if (trigger.dataset.togglerTarget) {
                     datatarget = trigger.dataset.togglerTarget;
@@ -344,7 +360,8 @@ class Toggler {
                     return;
                 
                 const targets = document.body.querySelectorAll(datatarget);
-                targets.forEach(target => {
+                // init targets
+                Array.prototype.slice.call(targets).forEach(target => {
                     if (Toggler.getPlugin(target).isVisible())
                         trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
                     else {

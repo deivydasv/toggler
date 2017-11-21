@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.0.0
- * Last update on: 2017-11-17 01:40:38
+ * Version: 1.1.0
+ * Last update on: 2017-11-21 13:29:24
  * Author: Deivydas Vaseris
  */
 
@@ -63,41 +63,20 @@ var Toggler = function () {
                 collection = typeof collection == 'string' ? document.body.querySelector(collection) : collection;
                 if (!collection) break collection;
 
-                //find siblings in given collection
+                // find siblings in given collection
                 others = collection.querySelectorAll('.' + Toggler.Config.CLASS_BASE);
                 if (!others) break collection;
-                others = Array.from(others).filter(function (e) {
+                others = Array.prototype.slice.call(others).filter(function (e) {
                     return !e.isSameNode(el);
                 });
 
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
+                for (var i = 0; i < others.length; i++) {
+                    var toggler = Toggler.getPlugin(others[i]);
+                    // stop if any of siblings are transitioning
+                    if (toggler.isTransitioning()) return;
 
-                try {
-                    for (var _iterator = others[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var e = _step.value;
-
-                        var toggler = Toggler.getPlugin(e);
-                        //stop if any of siblings are transitioning
-                        if (toggler.isTransitioning()) return;
-
-                        //or close if visible
-                        if (toggler.isVisible()) toggler.hide(null, force || force_siblings);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
+                    // or close if visible
+                    if (toggler.isVisible()) toggler.hide(null, force || force_siblings);
                 }
             }
 
@@ -258,7 +237,8 @@ var Toggler = function () {
         value: function _triggerCheck() {
             var _this3 = this;
 
-            document.body.querySelectorAll('[data-toggler]').forEach(function (trigger) {
+            var triggers = document.body.querySelectorAll('[data-toggler]');
+            Array.prototype.slice.call(triggers).forEach(function (trigger) {
                 var datatarget = void 0;
                 if (trigger.dataset.togglerTarget) {
                     datatarget = trigger.dataset.togglerTarget;
@@ -269,7 +249,7 @@ var Toggler = function () {
                 if (!datatarget) return;
 
                 var targets = document.body.querySelectorAll(datatarget);
-                targets.forEach(function (target) {
+                Array.prototype.slice.call(targets).forEach(function (target) {
                     if (target.isSameNode(_this3.element)) {
                         if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
                             trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
@@ -286,7 +266,14 @@ var Toggler = function () {
     }, {
         key: '_dispatchEvent',
         value: function _dispatchEvent(name) {
-            this.element.dispatchEvent(new Event('toggler.' + name));
+            var event = void 0;
+            try {
+                event = new Event('toggler.' + name);
+            } catch (error) {
+                event = document.createEvent('Event');
+                event.initEvent('toggler.' + name, false, false);
+            }
+            this.element.dispatchEvent(event);
         }
     }, {
         key: '_addTransitionEndListener',
@@ -310,22 +297,11 @@ var Toggler = function () {
             this.element.removeEventListener(Toggler.TransitionEnd, callback);
         }
     }], [{
-        key: 'Init',
-        value: function Init(config) {
+        key: 'AddEventClick',
+        value: function AddEventClick() {
 
-            // config
-            Toggler.Config = Object.assign({
-                CLASS_BASE: 'js-toggler',
-                CLASS_VISIBLE: 'is-visible',
-                CLASS_TARGET_VISIBLE: 'is-target-visible',
-                CLASS_TRANSITIONING: 'is-transitioning',
-                CLASS_FADE: 'is-fade',
-                CLASS_SLIDEFADE: 'is-slidefade'
-            }, config || {});
-
-            var init = function init() {
-
-                //add click events for triggers
+            // body.onclick delegate
+            if (Toggler.Config.DELEGATE_CLICK) {
                 document.body.addEventListener('click', function (event) {
                     var trigger = void 0;
                     for (var element = event.target; element != document.body; element = element.parentElement) {
@@ -338,27 +314,72 @@ var Toggler = function () {
 
                     event.preventDefault();
 
-                    var datatarget = void 0;
-                    if (trigger.dataset.togglerTarget) {
-                        datatarget = trigger.dataset.togglerTarget;
-                    } else if (trigger.hasAttribute('href')) {
-                        datatarget = trigger.getAttribute('href');
-                    }
-
-                    if (!datatarget) return;
-
-                    var targets = document.body.querySelectorAll(datatarget);
-                    var action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
-                    var force = trigger.dataset.togglerForce ? true : false;
-                    var collection = document.body.querySelector(trigger.dataset.togglerCollection);
-
-                    targets.forEach(function (target) {
-                        Toggler.getPlugin(target)[action](collection, force);
-                    });
+                    triggerClickActions(trigger);
                 });
+            }
 
-                //check all triggers (to add CLASS_TARGET_VISIBLE class on trigger / init Toggler on target)
-                document.body.querySelectorAll('[data-toggler]').forEach(function (trigger) {
+            // [data-toggler].onclick
+            else {
+                    var triggers = document.body.querySelectorAll('[data-toggler]');
+                    if (!triggers.length) return;
+
+                    Array.prototype.slice.call(triggers).forEach(function (trigger) {
+                        trigger.addEventListener('click', function (event) {
+                            event.preventDefault();
+
+                            triggerClickActions(trigger);
+                        });
+                    });
+                }
+
+            function triggerClickActions(trigger) {
+                var datatarget = void 0;
+                if (trigger.dataset.togglerTarget) {
+                    datatarget = trigger.dataset.togglerTarget;
+                } else if (trigger.hasAttribute('href')) {
+                    datatarget = trigger.getAttribute('href');
+                }
+
+                if (!datatarget) return;
+
+                var targets = document.body.querySelectorAll(datatarget);
+                var action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
+                var force = trigger.dataset.togglerForce ? true : false;
+                var collection = document.body.querySelector(trigger.dataset.togglerCollection);
+
+                Array.prototype.slice.call(targets).forEach(function (target) {
+                    Toggler.getPlugin(target)[action](collection, force);
+                });
+            };
+        }
+    }, {
+        key: 'Init',
+        value: function Init(config) {
+
+            // config
+            Toggler.Config = {
+                CLASS_BASE: 'js-toggler',
+                CLASS_VISIBLE: 'is-visible',
+                CLASS_TARGET_VISIBLE: 'is-target-visible',
+                CLASS_TRANSITIONING: 'is-transitioning',
+                CLASS_FADE: 'is-fade',
+                CLASS_SLIDEFADE: 'is-slidefade',
+                DELEGATE_CLICK: false
+            };
+
+            Object.keys(config || {}).forEach(function (name) {
+                Toggler.Config[name] = config[name];
+            });
+
+            var init = function init() {
+
+                // add click events for triggers
+                Toggler.AddEventClick();
+
+                // check all triggers (to add CLASS_TARGET_VISIBLE class on trigger/init Toggler on target)
+                var triggers = document.body.querySelectorAll('[data-toggler]');
+
+                Array.prototype.slice.call(triggers).forEach(function (trigger) {
                     var datatarget = void 0;
                     if (trigger.dataset.togglerTarget) {
                         datatarget = trigger.dataset.togglerTarget;
@@ -369,7 +390,8 @@ var Toggler = function () {
                     if (!datatarget) return;
 
                     var targets = document.body.querySelectorAll(datatarget);
-                    targets.forEach(function (target) {
+                    // init targets
+                    Array.prototype.slice.call(targets).forEach(function (target) {
                         if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
                             trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
                         }
