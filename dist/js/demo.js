@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.0
- * Last update on: 2017-11-21 13:29:24
+ * Version: 1.1.1
+ * Last update on: 2017-12-08 15:13:24
  * Author: Deivydas Vaseris
  */
 
@@ -10,3 +10,17 @@
 Toggler.Init({
     CLASS_TARGET_VISIBLE: 'active'
 });
+
+var load = function load() {
+    var content = document.getElementById('test-content');
+    var button = document.getElementById('test-button');
+
+    var toggler = new Toggler(content);
+    toggler.show();
+
+    button.addEventListener('click', function (_) {
+        return toggler.toggle();
+    });
+};
+
+document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', load) : load();

@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.0
- * Last update on: 2017-11-21 13:29:24
+ * Version: 1.1.1
+ * Last update on: 2017-12-08 15:13:24
  * Author: Deivydas Vaseris
  */
 
@@ -87,7 +87,7 @@ var Toggler = function () {
                 return;
             }
 
-            var afterTransition = function afterTransition(e) {
+            var afterTransition = function afterTransition() {
                 el.classList.add(Toggler.Config.CLASS_VISIBLE);
 
                 if (_this.isFadeAnimation() || _this.isSlideFadeAnimation()) {
@@ -246,16 +246,16 @@ var Toggler = function () {
                     datatarget = trigger.getAttribute('href');
                 }
 
-                if (!datatarget) return;
-
-                var targets = document.body.querySelectorAll(datatarget);
-                Array.prototype.slice.call(targets).forEach(function (target) {
-                    if (target.isSameNode(_this3.element)) {
-                        if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
-                            trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
+                if (datatarget) {
+                    var targets = document.body.querySelectorAll(datatarget);
+                    Array.prototype.slice.call(targets).forEach(function (target) {
+                        if (target.isSameNode(_this3.element)) {
+                            if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
+                                trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         }
     }, {
@@ -305,7 +305,7 @@ var Toggler = function () {
                 document.body.addEventListener('click', function (event) {
                     var trigger = void 0;
                     for (var element = event.target; element != document.body; element = element.parentElement) {
-                        if (element.matches('[data-toggler]')) {
+                        if (element.dataset.toggler) {
                             trigger = element;
                             break;
                         }
@@ -387,15 +387,15 @@ var Toggler = function () {
                         datatarget = trigger.getAttribute('href');
                     }
 
-                    if (!datatarget) return;
-
-                    var targets = document.body.querySelectorAll(datatarget);
-                    // init targets
-                    Array.prototype.slice.call(targets).forEach(function (target) {
-                        if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
-                            trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
-                        }
-                    });
+                    if (datatarget) {
+                        var targets = document.body.querySelectorAll(datatarget);
+                        // init targets
+                        Array.prototype.slice.call(targets).forEach(function (target) {
+                            if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
+                                trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
+                            }
+                        });
+                    }
                 });
             };
 

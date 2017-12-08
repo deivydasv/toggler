@@ -70,7 +70,7 @@ class Toggler {
             return;
         }
 
-        let afterTransition = (e) => {
+        let afterTransition = () => {
             el.classList.add( Toggler.Config.CLASS_VISIBLE );
             
             if (this.isFadeAnimation() || this.isSlideFadeAnimation()) {
@@ -212,19 +212,18 @@ class Toggler {
                 datatarget = trigger.getAttribute('href');
             }
 
-            if (!datatarget)
-                return;
-
-            const targets = document.body.querySelectorAll(datatarget);
-            Array.prototype.slice.call(targets).forEach(target => {
-                if (target.isSameNode(this.element)) {
-                    if (Toggler.getPlugin(target).isVisible())
-                        trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
-                    else {
-                        trigger.classList.remove( Toggler.Config.CLASS_TARGET_VISIBLE );
+            if (datatarget) {
+                const targets = document.body.querySelectorAll(datatarget);
+                Array.prototype.slice.call(targets).forEach(target => {
+                    if (target.isSameNode(this.element)) {
+                        if (Toggler.getPlugin(target).isVisible())
+                            trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
+                        else {
+                            trigger.classList.remove( Toggler.Config.CLASS_TARGET_VISIBLE );
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     }
     
@@ -270,7 +269,7 @@ class Toggler {
             document.body.addEventListener('click', event => {
                 let trigger;
                 for(let element = event.target; element != document.body; element = element.parentElement) {
-                    if (element.matches('[data-toggler]')) {
+                    if (element.dataset.toggler) {
                         trigger = element;
                         break;
                     }
@@ -356,18 +355,17 @@ class Toggler {
                     datatarget = trigger.getAttribute('href');
                 }
 
-                if (!datatarget)
-                    return;
-                
-                const targets = document.body.querySelectorAll(datatarget);
-                // init targets
-                Array.prototype.slice.call(targets).forEach(target => {
-                    if (Toggler.getPlugin(target).isVisible())
-                        trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
-                    else {
-                        trigger.classList.remove( Toggler.Config.CLASS_TARGET_VISIBLE );
-                    }
-                });
+                if (datatarget) {
+                    const targets = document.body.querySelectorAll(datatarget);
+                    // init targets
+                    Array.prototype.slice.call(targets).forEach(target => {
+                        if (Toggler.getPlugin(target).isVisible())
+                            trigger.classList.add( Toggler.Config.CLASS_TARGET_VISIBLE );
+                        else {
+                            trigger.classList.remove( Toggler.Config.CLASS_TARGET_VISIBLE );
+                        }
+                    });
+                }
             });
         };
         
