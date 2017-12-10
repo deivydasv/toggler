@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.1
- * Last update on: 2017-12-08 15:13:24
+ * Version: 1.1.2
+ * Last update on: 2017-12-10 15:15:38
  * Author: Deivydas Vaseris
  */
 
@@ -240,7 +240,7 @@ var Toggler = function () {
             var triggers = document.body.querySelectorAll('[data-toggler]');
             Array.prototype.slice.call(triggers).forEach(function (trigger) {
                 var datatarget = void 0;
-                if (trigger.dataset.togglerTarget) {
+                if (trigger.dataset.togglerTarget !== undefined) {
                     datatarget = trigger.dataset.togglerTarget;
                 } else if (trigger.hasAttribute('href')) {
                     datatarget = trigger.getAttribute('href');
@@ -305,7 +305,7 @@ var Toggler = function () {
                 document.body.addEventListener('click', function (event) {
                     var trigger = void 0;
                     for (var element = event.target; element != document.body; element = element.parentElement) {
-                        if (element.dataset.toggler) {
+                        if (element.dataset.toggler !== undefined) {
                             trigger = element;
                             break;
                         }
@@ -334,7 +334,7 @@ var Toggler = function () {
 
             function triggerClickActions(trigger) {
                 var datatarget = void 0;
-                if (trigger.dataset.togglerTarget) {
+                if (trigger.dataset.togglerTarget !== undefined) {
                     datatarget = trigger.dataset.togglerTarget;
                 } else if (trigger.hasAttribute('href')) {
                     datatarget = trigger.getAttribute('href');
@@ -344,7 +344,7 @@ var Toggler = function () {
 
                 var targets = document.body.querySelectorAll(datatarget);
                 var action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
-                var force = trigger.dataset.togglerForce ? true : false;
+                var force = trigger.dataset.togglerForce === "" || /^(1|true|yes)$/gi.test(trigger.dataset.togglerForce) ? true : false;
                 var collection = document.body.querySelector(trigger.dataset.togglerCollection);
 
                 Array.prototype.slice.call(targets).forEach(function (target) {
@@ -381,7 +381,7 @@ var Toggler = function () {
 
                 Array.prototype.slice.call(triggers).forEach(function (trigger) {
                     var datatarget = void 0;
-                    if (trigger.dataset.togglerTarget) {
+                    if (trigger.dataset.togglerTarget !== undefined) {
                         datatarget = trigger.dataset.togglerTarget;
                     } else if (trigger.hasAttribute('href')) {
                         datatarget = trigger.getAttribute('href');

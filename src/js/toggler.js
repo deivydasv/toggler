@@ -205,7 +205,7 @@ class Toggler {
         const triggers = document.body.querySelectorAll('[data-toggler]');
         Array.prototype.slice.call(triggers).forEach(trigger => {
             let datatarget;
-            if (trigger.dataset.togglerTarget) {
+            if (trigger.dataset.togglerTarget !== undefined) {
                 datatarget = trigger.dataset.togglerTarget;
             }
             else if (trigger.hasAttribute('href')) {
@@ -269,7 +269,7 @@ class Toggler {
             document.body.addEventListener('click', event => {
                 let trigger;
                 for(let element = event.target; element != document.body; element = element.parentElement) {
-                    if (element.dataset.toggler) {
+                    if (element.dataset.toggler !== undefined) {
                         trigger = element;
                         break;
                     }
@@ -300,7 +300,7 @@ class Toggler {
         
         function triggerClickActions(trigger) { 
             let datatarget;
-            if (trigger.dataset.togglerTarget) {
+            if (trigger.dataset.togglerTarget !== undefined) {
                 datatarget = trigger.dataset.togglerTarget;
             }
             else if (trigger.hasAttribute('href')) {
@@ -312,7 +312,7 @@ class Toggler {
 
             const targets = document.body.querySelectorAll(datatarget);
             const action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
-            const force = trigger.dataset.togglerForce ? true : false;
+            const force = trigger.dataset.togglerForce === "" || /^(1|true|yes)$/gi.test(trigger.dataset.togglerForce) ? true : false;
             const collection = document.body.querySelector(trigger.dataset.togglerCollection);
 
             Array.prototype.slice.call(targets).forEach(target => {
@@ -348,7 +348,7 @@ class Toggler {
             
             Array.prototype.slice.call(triggers).forEach(trigger => {
                 let datatarget;
-                if (trigger.dataset.togglerTarget) {
+                if (trigger.dataset.togglerTarget !== undefined) {
                     datatarget = trigger.dataset.togglerTarget;
                 }
                 else if (trigger.hasAttribute('href')) {

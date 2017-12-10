@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.1
- * Last update on: 2017-12-08 15:13:24
+ * Version: 1.1.2
+ * Last update on: 2017-12-10 15:15:38
  * Author: Deivydas Vaseris
  */
 .js-toggler{display:none}.js-toggler.is-transitioning{display:block;position:relative;overflow:hidden;-webkit-transition:height .5s ease;transition:height .5s ease}.js-toggler.is-transitioning.is-fade{-webkit-transition:opacity .5s linear;transition:opacity .5s linear}.js-toggler.is-transitioning.is-slidefade{-webkit-transition:height .5s ease,opacity .5s linear;transition:height .5s ease,opacity .5s linear}.js-toggler.is-visible{display:block}
