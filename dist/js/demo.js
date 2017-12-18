@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.2
- * Last update on: 2017-12-10 15:15:38
+ * Version: 1.1.3
+ * Last update on: 2017-12-18 14:47:10
  * Author: Deivydas Vaseris
  */
 
@@ -18,9 +18,13 @@ var load = function load() {
     var toggler = new Toggler(content);
     toggler.show();
 
-    button.addEventListener('click', function (_) {
+    button.addEventListener('click', function () {
         return toggler.toggle();
     });
 };
 
-document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', load) : load();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', load);
+} else {
+    load();
+}

@@ -1,7 +1,7 @@
 /*!
  * Toggler (https://github.com/deivydasv/toggler)
- * Version: 1.1.2
- * Last update on: 2017-12-10 15:15:38
+ * Version: 1.1.3
+ * Last update on: 2017-12-18 14:47:10
  * Author: Deivydas Vaseris
  */
 
@@ -20,7 +20,12 @@ var Toggler = function () {
     }, {
         key: 'TransitionEnd',
         get: function get() {
-            return 'transition' in document.documentElement.style ? 'transitionend' : 'WebkitTransition' in document.documentElement.style ? 'webkitTransitionEnd' : null;
+            if ('transition' in document.documentElement.style) {
+                return 'transitionend';
+            } else if ('WebkitTransition' in document.documentElement.style) {
+                return 'webkitTransitionEnd';
+            }
+            return null;
         }
     }]);
 
@@ -28,12 +33,14 @@ var Toggler = function () {
         _classCallCheck(this, Toggler);
 
         if (arguments.length) {
-            var element = arguments[0];
-            if (typeof element == 'string') {
+            var element = arguments.length <= 0 ? undefined : arguments[0];
+            if (typeof element === 'string') {
                 element = document.body.querySelector(element);
             }
             if (element instanceof HTMLElement) {
-                if (element.Toggler) return element.Toggler;
+                if (element.Toggler) {
+                    return element.Toggler;
+                }
 
                 element.Toggler = this;
                 this.element = element;
@@ -50,7 +57,7 @@ var Toggler = function () {
             var _this = this;
 
             var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-            var force_siblings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var forceSiblings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             var el = this.element;
             var others = [];
@@ -59,24 +66,30 @@ var Toggler = function () {
                 return;
             }
 
-            collection: if (collection) {
-                collection = typeof collection == 'string' ? document.body.querySelector(collection) : collection;
-                if (!collection) break collection;
+            // collection:
+            if (collection) {
+                var collectionElements = typeof collection === 'string' ? document.body.querySelector(collection) : collection;
+                if (collectionElements) {
+                    // find siblings in given collection
+                    others = collectionElements.querySelectorAll('.' + Toggler.Config.CLASS_BASE);
+                    if (others) {
+                        others = Array.prototype.slice.call(others).filter(function (e) {
+                            return !e.isSameNode(el);
+                        });
 
-                // find siblings in given collection
-                others = collection.querySelectorAll('.' + Toggler.Config.CLASS_BASE);
-                if (!others) break collection;
-                others = Array.prototype.slice.call(others).filter(function (e) {
-                    return !e.isSameNode(el);
-                });
+                        for (var i = 0; i < others.length; i += 1) {
+                            var toggler = Toggler.getPlugin(others[i]);
+                            // stop if any of siblings are transitioning
+                            if (toggler.isTransitioning()) {
+                                return;
+                            }
 
-                for (var i = 0; i < others.length; i++) {
-                    var toggler = Toggler.getPlugin(others[i]);
-                    // stop if any of siblings are transitioning
-                    if (toggler.isTransitioning()) return;
-
-                    // or close if visible
-                    if (toggler.isVisible()) toggler.hide(null, force || force_siblings);
+                            // or close if visible
+                            if (toggler.isVisible()) {
+                                toggler.hide(null, force || forceSiblings);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -131,7 +144,6 @@ var Toggler = function () {
             var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
             var el = this.element;
-            var others = [];
 
             if (this.isHidden() || this.isTransitioning()) {
                 return;
@@ -250,7 +262,9 @@ var Toggler = function () {
                     var targets = document.body.querySelectorAll(datatarget);
                     Array.prototype.slice.call(targets).forEach(function (target) {
                         if (target.isSameNode(_this3.element)) {
-                            if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
+                            if (Toggler.getPlugin(target).isVisible()) {
+                                trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);
+                            } else {
                                 trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
                             }
                         }
@@ -261,7 +275,7 @@ var Toggler = function () {
     }, {
         key: '_repaint',
         value: function _repaint() {
-            getComputedStyle(this.element).height;
+            return getComputedStyle(this.element).height;
         }
     }, {
         key: '_dispatchEvent',
@@ -271,7 +285,7 @@ var Toggler = function () {
                 event = new Event('toggler.' + name);
             } catch (error) {
                 event = document.createEvent('Event');
-                event.initEvent('toggler.' + name, false, false);
+                event.initEvent('toggler' + name, false, false);
             }
             this.element.dispatchEvent(event);
         }
@@ -299,39 +313,6 @@ var Toggler = function () {
     }], [{
         key: 'AddEventClick',
         value: function AddEventClick() {
-
-            // body.onclick delegate
-            if (Toggler.Config.DELEGATE_CLICK) {
-                document.body.addEventListener('click', function (event) {
-                    var trigger = void 0;
-                    for (var element = event.target; element != document.body; element = element.parentElement) {
-                        if (element.dataset.toggler !== undefined) {
-                            trigger = element;
-                            break;
-                        }
-                    }
-                    if (!trigger) return;
-
-                    event.preventDefault();
-
-                    triggerClickActions(trigger);
-                });
-            }
-
-            // [data-toggler].onclick
-            else {
-                    var triggers = document.body.querySelectorAll('[data-toggler]');
-                    if (!triggers.length) return;
-
-                    Array.prototype.slice.call(triggers).forEach(function (trigger) {
-                        trigger.addEventListener('click', function (event) {
-                            event.preventDefault();
-
-                            triggerClickActions(trigger);
-                        });
-                    });
-                }
-
             function triggerClickActions(trigger) {
                 var datatarget = void 0;
                 if (trigger.dataset.togglerTarget !== undefined) {
@@ -340,22 +321,56 @@ var Toggler = function () {
                     datatarget = trigger.getAttribute('href');
                 }
 
-                if (!datatarget) return;
+                if (!datatarget) {
+                    return;
+                }
 
                 var targets = document.body.querySelectorAll(datatarget);
                 var action = (trigger.dataset.toggler.match(/(show|hide|tab)/gi) || ['toggle'])[0].toLowerCase();
-                var force = trigger.dataset.togglerForce === "" || /^(1|true|yes)$/gi.test(trigger.dataset.togglerForce) ? true : false;
+                var force = trigger.dataset.togglerForce === '' || /^(1|true|yes)$/gi.test(trigger.dataset.togglerForce);
                 var collection = document.body.querySelector(trigger.dataset.togglerCollection);
 
                 Array.prototype.slice.call(targets).forEach(function (target) {
                     Toggler.getPlugin(target)[action](collection, force);
                 });
-            };
+            }
+
+            // body.onclick delegate
+            if (Toggler.Config.DELEGATE_CLICK) {
+                document.body.addEventListener('click', function (event) {
+                    var trigger = void 0;
+                    for (var element = event.target; element !== document.body; element = element.parentElement) {
+                        if (element.dataset.toggler !== undefined) {
+                            trigger = element;
+                            break;
+                        }
+                    }
+                    if (!trigger) {
+                        return;
+                    }
+                    event.preventDefault();
+                    triggerClickActions(trigger);
+                });
+            }
+
+            // [data-toggler].onclick
+            else {
+                    var triggers = document.body.querySelectorAll('[data-toggler]');
+                    if (!triggers.length) {
+                        return;
+                    }
+
+                    Array.prototype.slice.call(triggers).forEach(function (trigger) {
+                        trigger.addEventListener('click', function (event) {
+                            event.preventDefault();
+                            triggerClickActions(trigger);
+                        });
+                    });
+                }
         }
     }, {
         key: 'Init',
         value: function Init(config) {
-
             // config
             Toggler.Config = {
                 CLASS_BASE: 'js-toggler',
@@ -372,11 +387,10 @@ var Toggler = function () {
             });
 
             var init = function init() {
-
                 // add click events for triggers
                 Toggler.AddEventClick();
 
-                // check all triggers (to add CLASS_TARGET_VISIBLE class on trigger/init Toggler on target)
+                // check all triggers (to add class on trigger/init Toggler on target)
                 var triggers = document.body.querySelectorAll('[data-toggler]');
 
                 Array.prototype.slice.call(triggers).forEach(function (trigger) {
@@ -391,7 +405,9 @@ var Toggler = function () {
                         var targets = document.body.querySelectorAll(datatarget);
                         // init targets
                         Array.prototype.slice.call(targets).forEach(function (target) {
-                            if (Toggler.getPlugin(target).isVisible()) trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);else {
+                            if (Toggler.getPlugin(target).isVisible()) {
+                                trigger.classList.add(Toggler.Config.CLASS_TARGET_VISIBLE);
+                            } else {
                                 trigger.classList.remove(Toggler.Config.CLASS_TARGET_VISIBLE);
                             }
                         });
@@ -399,7 +415,11 @@ var Toggler = function () {
                 });
             };
 
-            document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
             Toggler.Init = null;
         }
     }]);
